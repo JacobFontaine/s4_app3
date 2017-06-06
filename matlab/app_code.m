@@ -37,6 +37,7 @@ x0 = output.Data(end, 2);
 y0 = output.Data(end, 1);
 vx0 = vx0 - delta_vx;
 vy0 = (output.Time(end)*g-5)*(-0.9);
+disp(vy0);
 init_cond = [x0; y0; vx0; vy0];
 
 sim('app3_simulink')
@@ -53,6 +54,7 @@ x0 = output.Data(end, 2);
 y0 = output.Data(end, 1);
 vx0 = vx0 - delta_vx;
 vy0 = (output.Time(end)/2*g)*(-0.8);
+disp(vy0);
 init_cond = [x0; y0; vx0; vy0];
 
 sim('app3_simulink')
@@ -69,6 +71,7 @@ x0 = output.Data(end, 2);
 y0 = output.Data(end, 1);
 vx0 = vx0 - delta_vx;
 vy0 = (output.Time(end)/2*g)*(-0.7);
+disp(vy0);
 init_cond = [x0; y0; vx0; vy0];
 
 sim('app3_simulink')

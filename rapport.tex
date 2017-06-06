@@ -1,0 +1,233 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage[english, french]{babel}
+\graphicspath{{images/} 
+\geometry{legalpaper, lmargin=0.7in, bmargin=1in}}
+\selectlanguage{french}
+
+\setlength\parindent{0pt}% globally suppress indentation
+
+\begin{document}
+%%%%%%%%%%%%%%
+%page  titre en caractères plus large
+%%%%%%%%%%%%%%
+\begin{titlepage}   
+	\large{
+		\begin{center}
+			UNIVERSITÉ DE SHERBROOKE\\Faculté de génie\\
+			Département de génie électrique et génie informatique\\
+			\vspace{3cm}
+			{\LARGE\textbf{Modélisation et simulation mécanique pour réalité virtuelle}}\\
+			\vspace{2cm}
+			\LARGE{Rapport APP3}\\
+			\vspace{2cm}
+			Présenté à\\l'équipe professorale de la session S4\\
+			\vspace{2cm}
+			Produit par\\Jacob Fontaine, Axel Bosco, Philippe Garneau\\
+			\vspace{1cm}
+			\vfill{7 juin 2017 - Sherbrooke}
+		\end{center}
+	}
+\end{titlepage}
+\newpage
+%%%%%%%%%%%%%%
+%Table des matières
+%%%%%%%%%%%%%%
+\tableofcontents
+
+\newpage
+\section{Introduction}
+Dans le cadre de cette problématique, nous devions créer l'animation de l'écrasement d'un vaisseau spatial sur une planète inconnue.La simulation a été faite en Simulink et en physique blender, pour créer 2 sphère et comparer les résultats. Dans ce rapport sont détaillés les calculs nécessaires pour faire la simulation. 
+
+\section{Variables d'états}
+Afin de de résoudre notre systême à l'aide de simulink, nous avons besoin de définir nos variables d'état pour générer nos matrices A, B, C, D.
+
+\begin{center}
+	Position = x, y\\
+    $Q_x$ = x'\\
+    $Q_y$ = y'\\
+    $Q_{x'}$ = x'' = 0\\
+    $Q_{y'}$ = y'' = g\\
+\end{center}
+C'est avec ces variables d'état et ces équations que nous pouvons générer nos matrices A, B, C, D:
+\begin{equation}
+	x' = Aq + Bu
+\end{equation}
+\begin{equation}
+   	y = Cq + Du
+\end{equation}
+\begin{equation}
+	q = 
+	\begin{bmatrix}
+    	Q_x\\
+        Q_y\\
+        Q_{x'}\\
+        Q_{y'}
+    \end{bmatrix}
+\end{equation}
+\begin{equation}
+   	u = |g|
+\end{equation}
+\begin{equation}
+	A =
+    \begin{bmatrix}
+    	0 & 0 & 1 & 0\\
+        0 & 0 & 0 & 1\\
+        0 & 0 & 0 & 0\\
+        0 & 0 & 0 & 0
+    \end{bmatrix}
+\end{equation}
+\begin{equation}
+	B =
+    \begin{bmatrix}
+    	0\\
+        0\\
+        0\\
+        1
+    \end{bmatrix}
+\end{equation}
+\begin{equation}
+	C =
+    \begin{bmatrix}
+    	0 & 1 & 0 & 0\\
+        1 & 0 & 0 & 0
+    \end{bmatrix}
+\end{equation}
+\begin{equation}
+	D =
+    \begin{bmatrix}
+    	0\\
+        0
+    \end{bmatrix}
+\end{equation}
+En utilisant les matrices et les équations décritent si-dessus dans simulink, nous pouvons trouver une solution à notre problème.
+
+\section{Collisions}
+\subsection{Chute initiale}
+Tout d'abord, il faut calculer les vitesses en X et en Y du vaisseau juste avant la première collision. Le vaisseau à une vitesse verticale nitiale de $5m/s$ et une vitesse initiale horizontale de $1.5m/s$. En sachant que l'acceleration gravitationnelle est de $5m/s^2$ et agit uniquement à la verticale, on pose:
+\begin{equation}
+V_y = \sqrt{V_0^2 + 2*a*(hf-hi-rayon)}
+\end{equation}
+\begin{equation}
+V_y = \sqrt{-25 + 10*(10-1.2-1.5)}
+\end{equation}
+\begin{equation}
+V_y = -9.899 m/s
+\end{equation}
+Pour la vitesse en X, on garde la même qu'initialement, donc:
+\begin{equation}
+V_x = 1.5 m/s
+\end{equation}
+\subsection{Première collision}
+Pour calculer la vitesse de la première collision en X, on doit tout d'abord calculer la friction. En sachant que la force de friction cinétique est de 180N, et que cette force s'exercera pendant 0,1sec, on peut poser:
+\begin{equation}
+F*\int_{0}^{t} dt = m*\int_{0}^{t} \frac{dV}{dt}dt 
+\end{equation}
+\begin{equation}
+\frac{F*t}{m} = V
+\end{equation}
+\begin{equation}
+\frac{180*0.1}{200} = V
+\end{equation}
+\begin{equation}
+V = 0.09m/s
+\end{equation}
+Ainsi, notre vitesse en X pour la première collision est:
+\begin{equation}
+V_x = V_i - friction = 1.5-0.09
+\end{equation}
+\begin{equation}
+V_x = 1.41
+\end{equation}
+Pour la vitesse en Y, on sait que le coefficient de friction est de 0.9, et que les vitesses normales initiale et final du sol sont 0. Donc:
+\begin{equation}
+e = \frac{V'B_n-V'A_n}{VA_n-VB_n}
+\end{equation}
+\begin{equation}
+0.9 = \frac{-V_{yf}}{-9.899}
+\end{equation}
+\begin{equation}
+V_{yf} = -8.9091 m/sec
+\end{equation}
+\subsection{Deuxième collision}
+Pour la deuxième collision, on calcul en premier la nouvelle vitesse en X:
+\begin{equation}
+V_x = V_i - friction = 1.41-0.09
+\end{equation}
+\begin{equation}
+V_x = 1.31
+\end{equation}
+Pour la vitesse en Y, nous voulons savoir la vitesse juste avant la collision. Donc: 
+\begin{equation}
+V_f = V_i + at
+\end{equation}
+On prend la vitesse initale à 0, nous divison le temps par 2. Le temps à été calculé grâce à simulink:
+\begin{equation}
+V_f = 0 + -5*3.5417/2
+\end{equation}
+\begin{equation}
+V_f = -8.85425 m/sec 
+\end{equation}
+Grâce à cette valeur, on peut trouver la vitesse en Y à la collision 2 grâce au coefficent de restitution de 0.8
+\begin{equation}
+e = \frac{V'B_n-V'A_n}{VA_n-VB_n}
+\end{equation}
+\begin{equation}
+0.8 = \frac{-V_{yf}}{-8.85425}
+\end{equation}
+\begin{equation}
+V_{yf} = -7.0834 m/sec
+\end{equation}
+\subsection{Troisième collision}
+Pour la troisième collision, on calcul en premier la nouvelle vitesse en X:
+\begin{equation}
+V_x = V_i - friction = 1.32-0.09
+\end{equation}
+\begin{equation}
+V_x = 1.23
+\end{equation}
+Pour la vitesse en Y, nous voulons savoir la vitesse juste avant la collision. Donc: 
+\begin{equation}
+V_f = V_i + at
+\end{equation}
+On prend la vitesse initale à 0, nous divison le temps par 2. Le temps à été calculé grâce à simulink:
+\begin{equation}
+V_f = 0 + -5*2.7917/2
+\end{equation}
+\begin{equation}
+V_f = -6.98 m/sec 
+\end{equation}
+Grâce à cette valeur, on peut trouver la vitesse en Y à la collision 3 grâce au coefficent de restitution de 0.7
+\begin{equation}
+e = \frac{V'B_n-V'A_n}{VA_n-VB_n}
+\end{equation}
+\begin{equation}
+0.7 = \frac{-V_{yf}}{-6.98}
+\end{equation}
+\begin{equation}
+V_{yf} = -4.8854 m/sec
+\end{equation}
+ 
+\section{Distance de glissement}
+Afin de trouver la distance finale de glissement, il est important de connaître notre composante en x de la vitesse du vaisseau. Après le quatrième impact, la valeur de $V_x$ est 1.23 m/s. Nous savons que pour cette partie du trajet du vaisseau, le sol applique une force de 200N dans une direction opposée au mouvement du vaisseau. Connaissant cela, on peut utiliser les équations suivantes:
+\begin{equation}
+	\Delta E_p + \Delta E_c = W
+\end{equation}
+Comme nous sommes au sol, nous considérons que l'énergie potentielle à une valeur de 0 et que la seule force non-conservative qui agit sur le vaisseau est la friction du sol.
+\begin{equation}
+	\frac{1}{2}mv^2 = Fd
+\end{equation}
+\begin{equation}
+	\frac{151.29}{200} = d
+\end{equation}
+\begin{equation}
+	d = 0.75645m
+\end{equation}
+ 
+\section{Conclusion}
+Pour conclure, cet APP avait pour but de nous familiariser avec Blender, Python et Simulink. Nous avons déterminé qu'une simplication de notre système afin de le simuler donne des résultats similaires à la réalité. Les techniques utilisées lors de cet APP pourront être réutilisées dans notre projet de session.
+
+\end{document}
