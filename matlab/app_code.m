@@ -21,7 +21,7 @@ vx0 = 1.5;
 vy0 = -5;
 init_cond = [x0; y0; vx0; vy0];
 
-sim('test_simulink')
+sim('app3_simulink')
 
 plot(output.Data(:, 2), output.Data(:, 1));
 hold on
@@ -37,11 +37,11 @@ x0 = output.Data(end, 2);
 y0 = output.Data(end, 1);
 vx0 = vx0 - delta_vx;
 vy0 = (output.Time(end)*g-5)*(-0.9);
-disp(vy0);
 init_cond = [x0; y0; vx0; vy0];
 
-sim('test_simulink')
+sim('app3_simulink')
 plot(output.Data(:, 2), output.Data(:, 1));
+disp(output.Time(end));
 %Bx = [output.Data(:, 2), output.Data(:, 1), output.Time()];
 Bx = [output.Data(:, 2), output.Data(:, 1)];
 
@@ -55,8 +55,9 @@ vx0 = vx0 - delta_vx;
 vy0 = (output.Time(end)/2*g)*(-0.8);
 init_cond = [x0; y0; vx0; vy0];
 
-sim('test_simulink')
+sim('app3_simulink')
 plot(output.Data(:, 2), output.Data(:, 1));
+disp(output.Time(end));
 %Cx = [output.Data(:, 2), output.Data(:, 1), output.Time()];
 Cx = [output.Data(:, 2), output.Data(:, 1)];
 
@@ -70,8 +71,9 @@ vx0 = vx0 - delta_vx;
 vy0 = (output.Time(end)/2*g)*(-0.7);
 init_cond = [x0; y0; vx0; vy0];
 
-sim('test_simulink')
+sim('app3_simulink')
 plot(output.Data(:, 2), output.Data(:, 1));
+disp(output.Time(end));
 %Dx = [output.Data(:, 2), output.Data(:, 1), output.Time()];
 Dx = [output.Data(:, 2), output.Data(:, 1)];
 
